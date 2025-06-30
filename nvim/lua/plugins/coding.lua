@@ -13,6 +13,33 @@ return {
 		end,
 	},
 
+	-- terminal
+	{
+		{
+			"akinsho/toggleterm.nvim",
+			version = "*",
+			keys = {
+				{
+					"<c-\\>", -- Your desired key mapping
+					"<cmd>ToggleTerm<cr>",
+					desc = "Toggle terminal",
+				},
+			},
+			config = function()
+				require("toggleterm").setup({
+					open_mapping = [[<c-\>]],
+					persist_size = true,
+					presist_mode = true,
+					direction = "horizontal",
+					size = 110,
+					winbar = {
+						enabled = false,
+					},
+				})
+			end,
+		},
+	},
+
 	-- indent
 	{
 		"lukas-reineke/indent-blankline.nvim",
@@ -122,5 +149,44 @@ return {
 			)
 			keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 		end,
+	},
+
+	{
+		"folke/trouble.nvim",
+		opts = {},
+		cmd = "Trouble",
+		event = "LspAttach",
+		keys = {
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle focus=true<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+			{
+				"<leader>xX",
+				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+				desc = "Buffer Diagnostics (Trouble)",
+			},
+			{
+				"<leader>cs",
+				"<cmd>Trouble symbols toggle focus=true win.position=bottom<cr>",
+				desc = "Symbols (Trouble)",
+			},
+			{
+				"<leader>cl",
+				"<cmd>Trouble lsp toggle focus=true win.position=bottom<cr>",
+				desc = "LSP Definitions / references / ... (Trouble)",
+			},
+			{
+				"<leader>xL",
+				"<cmd>Trouble loclist toggle<cr>",
+				desc = "Location List (Trouble)",
+			},
+			{
+				"<leader>xQ",
+				"<cmd>Trouble qflist toggle<cr>",
+				desc = "Quickfix List (Trouble)",
+			},
+		},
 	},
 }

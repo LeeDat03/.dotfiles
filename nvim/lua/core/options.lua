@@ -55,3 +55,6 @@ opt.splitbelow = true
 
 opt.scrolloff = 10
 opt.inccommand = "split"
+
+vim.diagnostic.config({ virtual_text = true })
+-- vim.diagnostic.config({ virtual_lines = true })
