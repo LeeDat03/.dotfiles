@@ -5,21 +5,21 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		opts = {},
 	},
-	{
-		"mason-org/mason-lspconfig.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = {
-			{ "mason-org/mason.nvim", opts = {} },
-			"neovim/nvim-lspconfig",
-		},
-		opts = {
-			automatic_enable = {
-				--			"lua_ls",
-				--			"vimls",
-				"gopls",
-			},
-		},
-	},
+	-- {
+	-- 	"mason-org/mason-lspconfig.nvim",
+	-- 	event = { "BufReadPre", "BufNewFile" },
+	-- 	dependencies = {
+	-- 		{ "mason-org/mason.nvim", opts = {} },
+	-- 		"neovim/nvim-lspconfig",
+	-- 	},
+	-- 	opts = {
+	-- 		automatic_enable = {
+	-- 			--			"lua_ls",
+	-- 			--			"vimls",
+	-- 			"gopls",
+	-- 		},
+	-- 	},
+	-- },
 
 	{
 		"saghen/blink.cmp",
@@ -128,41 +128,106 @@ return {
 			"saghen/blink.cmp",
 		},
 		config = function()
+			local lspconfig = require("lspconfig")
+			-- Blink to suggest action
+
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
+
 			-- Attach keymap
-			local on_attach = function(client, bufnr)
-				vim.api.nvim_set_option_value("omnifunc", "v:lua.vim.lsp.omnifunc", { buf = bufnr })
-
-				local bufmap = function(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, noremap = true, silent = true, desc = desc })
-				end
-
-				bufmap("n", "gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-				bufmap("n", "gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-				bufmap("n", "K", vim.lsp.buf.hover, "Hover Documentation")
-				bufmap("n", "gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-				bufmap("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
-				bufmap("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
-				bufmap("n", "<leader>wl", function()
-					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-				end, "[W]orkspace [L]ist Folders")
-				bufmap("n", "<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-				bufmap("n", "<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-				bufmap("n", "<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-				bufmap("n", "gr", vim.lsp.buf.references, "[G]oto [R]eferences")
-
-				print("LSP server '" .. client.name .. "' started successfully!")
+			local lsp_mappings = {
+				{
+					"<leader>gd",
+					function()
+						if vim.bo.filetype == "cs" then
+							require("omnisharp_extended").lsp_definitions()
+						else
+							vim.lsp.buf.definition()
+						end
+					end,
+				},
+				{
+					"<leader>k",
+					function()
+						vim.lsp.buf.hover({ border = "single" })
+					end,
+				},
+				{
+					"<leader>rn",
+					function()
+						vim.lsp.buf.rename()
+					end,
+				},
+				{
+					"<leader>gr",
+					function()
+						require("telescope.builtin").lsp_references()
+					end,
+				},
+				{
+					"<leader>gt",
+					function()
+						vim.lsp.buf.type_definition()
+					end,
+				},
+				{
+					"<leader>sh",
+					function()
+						vim.lsp.buf.signature_help()
+					end,
+				},
+				{
+					"<leader>ca",
+					function()
+						vim.lsp.buf.code_action()
+					end,
+				},
+				{
+					"<leader>d",
+					function()
+						vim.diagnostic.open_float(nil, {
+							source = "always",
+							border = "single",
+						})
+					end,
+				},
+			}
+			for _, mapping in ipairs(lsp_mappings) do
+				vim.keymap.set("n", mapping[1], mapping[2], { noremap = true, silent = true })
 			end
 
-			-- Blink to suggest action
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			local on_attach = function(client, _)
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
+			end
+
 			local servers = {
-				lua_ls = {},
+				lua_ls = {
+					settings = {
+						Lua = {
+							runtime = {
+								version = "LuaJIT",
+							},
+							diagnostics = {
+								globals = { "vim" },
+							},
+							workspace = {
+								library = {
+									vim.fn.expand("$VIMRUNTIME/lua"),
+									vim.fn.expand("$VIMRUNTIME/lua/vim/lsp"),
+									"${3rd}/love2d/library",
+								},
+								checkthirdparty = false,
+							},
+							telemetry = { enable = false },
+						},
+					},
+				},
 				vimls = {},
-				--			gopls = {
-				--				settings = {
-				--					gopls = { staticcheck = true },
-				--				},
-				--			},
+				gopls = {
+					settings = {
+						gopls = { staticcheck = true },
+					},
+				},
 			}
 
 			local lspconfig = require("lspconfig")

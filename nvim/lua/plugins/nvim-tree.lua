@@ -11,16 +11,18 @@ return {
 					relativenumber = true,
 					width = 35,
 				},
+				git = {
+					enable = true,
+					timeout = 5000,
+				},
+				diagnostics = { enable = false },
 				filters = {
 					dotfiles = true,
-					custom = { ".git", "node_modules", "__pycache__" },
+					custom = { ".git", "node_modules", "__pycache__", "package-lock.json" },
 					git_ignored = false,
 				},
 				disable_netrw = true,
 				hijack_netrw = true,
-				diagnostics = {
-					enable = false, -- Disable LSP diagnostics in the tree
-				},
 			})
 		end,
 	},
