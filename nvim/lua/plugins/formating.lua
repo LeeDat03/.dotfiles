@@ -7,11 +7,17 @@ return {
 		require("conform").setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
+				go = { "gofmt" },
 			},
-			format_on_save = {
-				timeout_ms = 500,
-				lsp_format = "fallback",
-			},
+			timeout = 7000,
+			debug = true,
+		})
+
+		vim.api.nvim_create_autocmd("BufWritePost", {
+			pattern = "*",
+			callback = function(args)
+				require("conform").format({ bufnr = args.buf, async = true })
+			end,
 		})
 	end,
 }

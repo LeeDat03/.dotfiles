@@ -15,31 +15,51 @@ return {
 
 	-- terminal
 	{
-		{
-			"akinsho/toggleterm.nvim",
-			version = "*",
-			keys = {
-				{
-					"<c-\\>", -- Your desired key mapping
-					"<cmd>ToggleTerm<cr>",
-					desc = "Toggle terminal",
-				},
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		-- keys = {
+		-- 	{
+		-- 		"<c-\\>", -- Your primary toggle mapping (toggles last active/new)
+		-- 		"<cmd>ToggleTerm<cr>",
+		-- 		desc = "Toggle terminal",
+		-- 	},
+		-- },
+		keys = {
+			{
+				"<C-`>",
+				"<cmd>ToggleTerm<cr>",
+				desc = "Toggle last/default terminal (size 12), or specific index with prefix",
 			},
-			config = function()
-				require("toggleterm").setup({
-					open_mapping = [[<c-\>]],
-					persist_size = true,
-					presist_mode = true,
-					direction = "horizontal",
-					size = 110,
-					winbar = {
-						enabled = false,
-					},
-				})
-			end,
+			-- The "<leader>tn" mapping for "new terminal" is still useful if you don't want to type a number
+			{
+				"<leader>tn", -- Example: 't'erminal 'n'ew (auto-numbered)
+				function()
+					local terminal = require("toggleterm.terminal")
+					local count = terminal.get_next_free_terminal_count()
+					-- Using the plugin's native ToggleTerm command to respect 'size = 110' from setup
+					vim.cmd("ToggleTerm " .. count)
+				end,
+				desc = "Open new terminal slot (auto-numbered, uses setup size)",
+			},
 		},
+		config = function()
+			require("toggleterm").setup({
+				open_mapping = [[<c-`>]],
+				persist_size = true,
+				persist_mode = true, -- Corrected typo
+				direction = "horizontal",
+				size = 110,
+				winbar = {
+					enabled = false,
+				},
+				term_win_opts = {
+					key_bindings = {
+						normal_mode = "jk",
+					},
+				},
+			})
+		end,
 	},
-
 	-- indent
 	{
 		"lukas-reineke/indent-blankline.nvim",

@@ -21,6 +21,21 @@ return {
 	-- 	},
 	-- },
 
+	-- {
+	-- 	"nvimdev/lspsaga.nvim",
+	-- 	config = function()
+	-- 		require("lspsaga").setup({
+	-- 			symbol_in_winbar({
+	-- 				enable = false,
+	--
+	-- 			}),
+	-- 		})
+	-- 	end,
+	-- 	dependencies = {
+	-- 		"nvim-treesitter/nvim-treesitter", -- optional
+	-- 	},
+	-- },
+
 	{
 		"saghen/blink.cmp",
 		-- snippet
@@ -42,6 +57,7 @@ return {
 			-- C-e: Hide menu
 			-- C-k: Toggle signature help (if signature.enabled = true)
 			-- keymap = { preset = "enter" },
+			--
 			completion = {
 				documentation = {
 					auto_show = true,
@@ -117,6 +133,7 @@ return {
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer" },
 			},
+			signature = { enabled = true, window = { border = "single" } },
 			fuzzy = { implementation = "prefer_rust_with_warning" },
 		},
 		opts_extend = { "sources.default" },

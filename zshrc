@@ -11,6 +11,9 @@ plugins=(
     zsh-autosuggestions
 )
 
+DISABLE_AUTO_TITLE="true"
+precmd() { print -Pn "\033]0;${PWD##*/}\007" }
+
 source $ZSH/oh-my-zsh.sh
 
 # Oh my posh theme
