@@ -24,7 +24,7 @@ keymap.set("i", "<C-z>", "<C-o>u", { noremap = true, silent = true, desc = "Undo
 keymap.set("n", "<C-a>", "ggVG", { noremap = true, silent = true, desc = "Select all" })
 
 -- Save file
-keymap.set({ "n", "i" }, "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true, desc = "Save file" })
+keymap.set({ "n" }, "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true, desc = "Save file" })
 
 -- Delete word
 keymap.set("i", "<C-H>", "<C-w>", { noremap = true, silent = true, desc = "Delete word" })
@@ -63,3 +63,5 @@ keymap.set("i", "<Up>", "<C-o>gk", { noremap = true, silent = true })
 -- Visual mode mappings for line navigation
 keymap.set("v", "<Down>", "gj", { noremap = true, silent = true })
 keymap.set("v", "<Up>", "gk", { noremap = true, silent = true })
+
+keymap.set("t", "<Esc>", "<C-\\><C-n>", { silent = true })

@@ -17,8 +17,8 @@ return {
 				},
 				diagnostics = { enable = false },
 				filters = {
-					dotfiles = true,
-					custom = { ".git", "node_modules", "__pycache__", "package-lock.json" },
+					dotfiles = false,
+					custom = { "node_modules", "__pycache__", "package-lock.json" },
 					git_ignored = false,
 				},
 				disable_netrw = true,

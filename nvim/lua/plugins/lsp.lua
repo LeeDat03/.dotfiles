@@ -5,35 +5,25 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		opts = {},
 	},
+
 	-- {
 	-- 	"mason-org/mason-lspconfig.nvim",
 	-- 	event = { "BufReadPre", "BufNewFile" },
-	-- 	dependencies = {
-	-- 		{ "mason-org/mason.nvim", opts = {} },
-	-- 		"neovim/nvim-lspconfig",
-	-- 	},
-	-- 	opts = {
-	-- 		automatic_enable = {
-	-- 			--			"lua_ls",
-	-- 			--			"vimls",
-	-- 			"gopls",
-	-- 		},
-	-- 	},
-	-- },
-
-	-- {
-	-- 	"nvimdev/lspsaga.nvim",
+	-- 	dependencies = { "neovim/nvim-lspconfig" },
 	-- 	config = function()
-	-- 		require("lspsaga").setup({
-	-- 			symbol_in_winbar({
-	-- 				enable = false,
-	--
-	-- 			}),
+	-- 		require("mason-lspconfig").setup({
+	-- 			ensure_installed = {
+	-- 				"lua_ls",
+	-- 				"ts_ls",
+	-- 				"pyright",
+	-- 				"clangd",
+	-- 				"html",
+	-- 				"cssls",
+	-- 				"tailwindcss",
+	-- 				"gopls",
+	-- 			},
 	-- 		})
 	-- 	end,
-	-- 	dependencies = {
-	-- 		"nvim-treesitter/nvim-treesitter", -- optional
-	-- 	},
 	-- },
 
 	{
@@ -242,8 +232,57 @@ return {
 				vimls = {},
 				gopls = {
 					settings = {
-						gopls = { staticcheck = true },
+						gopls = {
+							analyses = {
+								unusedparams = true,
+								unusedwrite = true,
+								nilness = true,
+							},
+							codelenses = {
+								gc_details = false,
+							},
+							-- usePlaceholders = true,
+							-- completeUnimported = true,
+							-- experimentalPostfixCompletions = true,
+							staticcheck = true,
+							matcher = "Fuzzy",
+							diagnosticsDelay = "500ms",
+							symbolMatcher = "fuzzy",
+							gofumpt = false,
+							directoryFilters = { "-vendor" },
+						},
 					},
+				},
+				html = {
+					filetypes = {
+						"html",
+						"css",
+						"javascript",
+						"typescript",
+						"javascriptreact",
+						"typescriptreact",
+					},
+				},
+
+				cssls = {
+					filetypes = { "css", "scss", "less" },
+				},
+
+				tailwindcss = {
+					filetypes = {
+						"html",
+						"css",
+						"javascript",
+						"typescript",
+						"javascriptreact",
+						"typescriptreact",
+					},
+				},
+				ts_ls = {
+					-- init_options = {
+					-- 	maxTsServerMemory = 3072,
+					-- 	single_file_support = true,
+					-- },
 				},
 			}
 
