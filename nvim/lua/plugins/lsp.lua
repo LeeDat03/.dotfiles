@@ -1,30 +1,28 @@
 return {
-	-- Mason
 	{
 		"mason-org/mason.nvim",
-		event = { "BufReadPre", "BufNewFile" },
+		event = "VeryLazy",
 		opts = {},
-	},
 
-	-- {
-	-- 	"mason-org/mason-lspconfig.nvim",
-	-- 	event = { "BufReadPre", "BufNewFile" },
-	-- 	dependencies = { "neovim/nvim-lspconfig" },
-	-- 	config = function()
-	-- 		require("mason-lspconfig").setup({
-	-- 			ensure_installed = {
-	-- 				"lua_ls",
-	-- 				"ts_ls",
-	-- 				"pyright",
-	-- 				"clangd",
-	-- 				"html",
-	-- 				"cssls",
-	-- 				"tailwindcss",
-	-- 				"gopls",
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
+		config = function()
+			require("mason").setup({
+				registries = {
+					"github:mason-org/mason-registry",
+					"github:Crashdummyy/mason-registry",
+				},
+			})
+		end,
+	},
+	{
+		"mason-org/mason-lspconfig.nvim",
+		event = "VeryLazy",
+		dependencies = { "neovim/nvim-lspconfig" },
+		config = function()
+			require("mason-lspconfig").setup({
+				automatic_enable = {},
+			})
+		end,
+	},
 
 	{
 		"saghen/blink.cmp",
@@ -128,85 +126,34 @@ return {
 		},
 		opts_extend = { "sources.default" },
 	},
-
 	{
 		"neovim/nvim-lspconfig",
+		event = { "VeryLazy" },
 		dependencies = {
-			"saghen/blink.cmp",
+			{ "saghen/blink.cmp" },
 		},
 		config = function()
 			local lspconfig = require("lspconfig")
-			-- Blink to suggest action
-
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-			-- Attach keymap
-			local lsp_mappings = {
-				{
-					"<leader>gd",
-					function()
-						if vim.bo.filetype == "cs" then
-							require("omnisharp_extended").lsp_definitions()
-						else
-							vim.lsp.buf.definition()
-						end
-					end,
-				},
-				{
-					"<leader>k",
-					function()
-						vim.lsp.buf.hover({ border = "single" })
-					end,
-				},
-				{
-					"<leader>rn",
-					function()
-						vim.lsp.buf.rename()
-					end,
-				},
-				{
-					"<leader>gr",
-					function()
-						require("telescope.builtin").lsp_references()
-					end,
-				},
-				{
-					"<leader>gt",
-					function()
-						vim.lsp.buf.type_definition()
-					end,
-				},
-				{
-					"<leader>sh",
-					function()
-						vim.lsp.buf.signature_help()
-					end,
-				},
-				{
-					"<leader>ca",
-					function()
-						vim.lsp.buf.code_action()
-					end,
-				},
-				{
-					"<leader>d",
-					function()
-						vim.diagnostic.open_float(nil, {
-							source = "always",
-							border = "single",
-						})
-					end,
-				},
-			}
-			for _, mapping in ipairs(lsp_mappings) do
-				vim.keymap.set("n", mapping[1], mapping[2], { noremap = true, silent = true })
-			end
+			-- C# lsp
+			-- vim.lsp.enable("roslyn_ls")
 
-			local on_attach = function(client, _)
-				client.server_capabilities.documentFormattingProvider = false
-				client.server_capabilities.documentRangeFormattingProvider = false
-			end
+			-- TS/JS lsp
+			vim.lsp.enable("ts_ls")
 
+			-- Go lsp
+			vim.lsp.enable("gopls")
+
+			-- Rust lsp
+			-- vim.lsp.enable("rust_analyzer")
+
+			vim.lsp.enable("html")
+			vim.lsp.enable("cssls")
+
+			-- vim.lsp.enable("sqlls")
+
+			-- Config server
 			local servers = {
 				lua_ls = {
 					settings = {
@@ -229,68 +176,23 @@ return {
 						},
 					},
 				},
-				vimls = {},
-				gopls = {
+				sqlls = {
 					settings = {
-						gopls = {
-							analyses = {
-								unusedparams = true,
-								unusedwrite = true,
-								nilness = true,
+						sqls = {
+							connections = {
+								{
+									driver = "sqlite",
+									dsn = "file:your_database.db?_journal=WAL&_sync=NORMAL",
+								},
 							},
-							codelenses = {
-								gc_details = false,
-							},
-							-- usePlaceholders = true,
-							-- completeUnimported = true,
-							-- experimentalPostfixCompletions = true,
-							staticcheck = true,
-							matcher = "Fuzzy",
-							diagnosticsDelay = "500ms",
-							symbolMatcher = "fuzzy",
-							gofumpt = false,
-							directoryFilters = { "-vendor" },
 						},
 					},
 				},
-				html = {
-					filetypes = {
-						"html",
-						"css",
-						"javascript",
-						"typescript",
-						"javascriptreact",
-						"typescriptreact",
-					},
-				},
-
-				cssls = {
-					filetypes = { "css", "scss", "less" },
-				},
-
-				tailwindcss = {
-					filetypes = {
-						"html",
-						"css",
-						"javascript",
-						"typescript",
-						"javascriptreact",
-						"typescriptreact",
-					},
-				},
-				ts_ls = {
-					-- init_options = {
-					-- 	maxTsServerMemory = 3072,
-					-- 	single_file_support = true,
-					-- },
-				},
 			}
 
-			local lspconfig = require("lspconfig")
-			for server_name, server_config in pairs(servers) do
-				server_config.on_attach = on_attach
-				server_config.capabilities = capabilities
-				lspconfig[server_name].setup(server_config)
+			for server, config in pairs(servers) do
+				config.capabilities = capabilities
+				lspconfig[server].setup(config)
 			end
 		end,
 	},

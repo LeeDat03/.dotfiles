@@ -26,12 +26,11 @@ function lsp() {
   source <(carapace _carapace)
 }
 
-
-export PATH=$PATH:/home/leedat/.spicetify
-
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
 
 export VISUAL='nvim'
 export EDITOR="$VISUAL"
+
+export PATH=$PATH:$HOME/go/bin

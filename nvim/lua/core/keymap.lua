@@ -1,67 +1,151 @@
--- Set leader key to space
-vim.g.mapleader = " "
+local M = {}
 
-local keymap = vim.keymap -- for conciseness
+-- Common options
+local opts = { noremap = true, silent = true }
+local no_remap_opts = { noremap = false, silent = true } -- For commands like commenting
+---------------------------------
 
------------------------ General Keymaps -------------------
--- Window navigation
-keymap.set("n", "<C-k>", ":wincmd k<CR>", { silent = true, desc = "Go up" })
-keymap.set("n", "<C-j>", ":wincmd j<CR>", { silent = true, desc = "Go down" })
-keymap.set("n", "<C-h>", ":wincmd h<CR>", { silent = true, desc = "Go left" })
-keymap.set("n", "<C-l>", ":wincmd l<CR>", { silent = true, desc = "Go right" })
+-- Close all buffers
+vim.api.nvim_create_user_command("BDA", "bufdo bd!", {})
 
--- Copy & paste
-keymap.set("v", "<C-c>", '"+y', { noremap = true, silent = true, desc = "Copy" })
-keymap.set("n", "<C-c>", '"+yy', { noremap = true, silent = true, desc = "Copy line" })
-keymap.set("n", "<C-v>", '"+p', { noremap = true, silent = true, desc = "Paste" })
-keymap.set("i", "<C-v>", "<C-r>+", { noremap = true, silent = true, desc = "Paste in insert mode" })
+-- Helper function to set keymaps
+local function map(mode, lhs, rhs, options)
+	vim.keymap.set(mode, lhs, rhs, options or opts)
+end
 
--- Undo
-keymap.set("n", "<C-z>", "u", { noremap = true, silent = true, desc = "Undo" })
-keymap.set("i", "<C-z>", "<C-o>u", { noremap = true, silent = true, desc = "Undo in insert mode" })
+-- Setup function to be called lazily
+function M.setup()
+	-- Pane navigation
+	local pane_mappings = {
+		["<C-h>"] = ":wincmd h<CR>",
+		["<C-j>"] = ":wincmd j<CR>",
+		["<C-k>"] = ":wincmd k<CR>",
+		["<C-l>"] = ":wincmd l<CR>",
+	}
+	for lhs, rhs in pairs(pane_mappings) do
+		map("n", lhs, rhs)
+	end
 
--- Select all
-keymap.set("n", "<C-a>", "ggVG", { noremap = true, silent = true, desc = "Select all" })
+	map("n", "<leader>l", function()
+		local clients = vim.lsp.get_clients()
+		for _, client in ipairs(clients) do
+			if client.name == "roslyn" or client.name == "roslyn_ls" then
+				vim.lsp.stop_client(client.id, true)
+			end
+		end
 
--- Save file
-keymap.set({ "n" }, "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true, desc = "Save file" })
+		-- Re-edit all open listed buffers to trigger LSP reattach
+		for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buflisted then
+				vim.api.nvim_buf_call(bufnr, function()
+					vim.cmd("edit")
+				end)
+			end
+		end
+	end, { desc = "Restart Roslyn LSP on all buffers" })
 
--- Delete word
-keymap.set("i", "<C-H>", "<C-w>", { noremap = true, silent = true, desc = "Delete word" })
+	-- General editing
+	map("n", "<leader>h", ":nohlsearch<CR>") -- Clear search highlight
+	map("n", "<C-s>", ":w<CR>") -- Save file
+	map("n", "<C-a>", "ggVG") -- Select all
 
--- Select line
-keymap.set("n", "<CR>", "V", { noremap = true, silent = true, desc = "Select line" })
+	-- Copy/paste with system clipboard
+	map("n", "<C-c>", '"+y')
+	map("v", "<C-c>", '"+y')
+	map("n", "<C-v>", '"+p')
+	map("v", "<C-v>", '"+p')
+	map("i", "<C-v>", "<C-r>+")
+	map("n", "<C-z>", "u")
+	map("i", "<C-z>", "<C-o>u")
 
--- Move line
-keymap.set("n", "<A-k>", ":m .-2<CR>==", { noremap = true, silent = true, desc = "Move line up" })
-keymap.set("n", "<A-j>", ":m .+1<CR>==", { noremap = true, silent = true, desc = "Move line down" })
+    -- toggle terminal
+    map("t", "<Esc>", "<C-\\><C-n>", { silent = true })
 
--- Buffer navigation
-keymap.set("n", "<Tab>", ":bnext<CR>", { noremap = true, silent = true, desc = "Next buffer" })
-keymap.set("n", "<S-Tab>", ":bprev<CR>", { noremap = true, silent = true, desc = "Prev buffer" })
+	-- Move lines
+	map("n", "<A-k>", ":m .-2<CR>==")
+	map("n", "<A-j>", ":m .+1<CR>==")
 
--- Quit Neovim
-keymap.set("n", "<C-q>", ":qa<CR>", { desc = "Quit Neovim" })
+	-- Line navigation (wrapped lines)
+	for _, mode in ipairs({ "n", "v" }) do
+		map(mode, "<Down>", "gj")
+		map(mode, "<Up>", "gk")
+	end
+	map("i", "<Down>", "<C-o>gj")
+	map("i", "<Up>", "<C-o>gk")
 
--- Clear search highlights
-keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear highlights" })
+    map("n", "<C-q>", ":qa<CR>")
 
--- Window management
-keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split vertical" })
-keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split horizontal" })
-keymap.set("n", "<leader>se", "<C-w>=", { desc = "Equal split size" })
-keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close split" })
+	-- Select current line
+	map("n", "<CR>", "V")
 
--- Normal mode mappings for line navigation
-keymap.set("n", "<Down>", "gj", { noremap = true, silent = true })
-keymap.set("n", "<Up>", "gk", { noremap = true, silent = true })
+	-- Plugin-specific keymaps
+	-- NvimTree
+	map("n", "<leader>e", ":NvimTreeToggle<CR>")
 
--- Insert mode mappings for line navigation
-keymap.set("i", "<Down>", "<C-o>gj", { noremap = true, silent = true })
-keymap.set("i", "<Up>", "<C-o>gk", { noremap = true, silent = true })
+	-- Diffview
+	local diffview_mappings = {
+		["<leader>do"] = ":DiffviewOpen<CR>",
+		["<leader>dc"] = ":DiffviewClose<CR>",
+		["<leader>dr"] = ":DiffviewRefresh<CR>",
+		["<leader>dh"] = ":DiffviewFileHistory<CR>",
+		["<leader>dhf"] = ":DiffviewFileHistory %<CR>",
+	}
+	for lhs, rhs in pairs(diffview_mappings) do
+		map("n", lhs, rhs)
+	end
 
--- Visual mode mappings for line navigation
-keymap.set("v", "<Down>", "gj", { noremap = true, silent = true })
-keymap.set("v", "<Up>", "gk", { noremap = true, silent = true })
+	-- LSP keymaps
+	local lsp_mappings = {
+		["<leader>gd"] = {
+			function()
+				vim.lsp.buf.definition()
+			end,
+			"LSP: Go to Definition",
+		},
+		["<leader>k"] = {
+			function()
+				vim.lsp.buf.hover({ border = "single" })
+			end,
+			"LSP: Hover",
+		},
+		["<leader>rn"] = {
+			function()
+				vim.lsp.buf.rename()
+			end,
+			"LSP: Rename",
+		},
+		["<leader>gt"] = {
+			function()
+				vim.lsp.buf.type_definition()
+			end,
+			"LSP: Type Definition",
+		},
+		["<leader>sh"] = {
+			function()
+				vim.lsp.buf.signature_help({ border = "single" })
+			end,
+			"LSP: Signature Help",
+		},
+		["<leader>ca"] = {
+			function()
+				vim.lsp.buf.code_action()
+			end,
+			"LSP: Code Action",
+		},
+		["<leader>d"] = {
+			function()
+				vim.diagnostic.open_float(nil, {
+					source = "always",
+					border = "single",
+				})
+			end,
+			"LSP: Show Diagnostic",
+		},
+	}
 
-keymap.set("t", "<Esc>", "<C-\\><C-n>", { silent = true })
+	for lhs, config in pairs(lsp_mappings) do
+		map("n", lhs, config[1], { desc = config[2], silent = true })
+	end
+end
+
+return M

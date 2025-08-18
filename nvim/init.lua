@@ -1,3 +1,9 @@
+vim.loader.enable()
+vim.opt.shada = ""
+
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 -- Set global variables
 require("core.globals")
 
@@ -5,7 +11,7 @@ require("core.globals")
 require("core.options")
 
 -- Set keymap
-require("core.keymap")
+require("core.keymap").setup()
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
