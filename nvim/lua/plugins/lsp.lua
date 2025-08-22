@@ -6,6 +6,14 @@ return {
 
 		config = function()
 			require("mason").setup({
+				ensure_installed = {
+					-- "lua_ls",
+					-- "gopls",
+					-- "html",
+					-- "cssls",
+					-- "ts_ls",
+					-- "prettierd",
+				},
 				registries = {
 					"github:mason-org/mason-registry",
 					"github:Crashdummyy/mason-registry",
@@ -150,6 +158,7 @@ return {
 
 			vim.lsp.enable("html")
 			vim.lsp.enable("cssls")
+			vim.lsp.enable("pyright")
 
 			-- vim.lsp.enable("sqlls")
 
