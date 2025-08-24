@@ -46,7 +46,7 @@ Open PowerShell as Administrator and run:
 ```powershell
 # Link WezTerm and Neovim configurations
 mklink "C:\Users\<your-username>\.wezterm.lua" "\path\to\.dotfiles\wezterm.lua"
-mklink "C:\Users\<your-username>\AppData\Local\nvim" "\path\to\.dotfiles\nvim"
+mklink /D "C:\Users\<your-username>\AppData\Local\nvim" "\path\to\.dotfiles\nvim"
 ```
 
 **On Linux:**  

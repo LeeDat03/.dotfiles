@@ -38,7 +38,7 @@ function M.setup()
 		for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
 			if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buflisted then
 				vim.api.nvim_buf_call(bufnr, function()
-					vim.cmd("edit")
+					vim.cmd("edit!")
 				end)
 			end
 		end
@@ -58,8 +58,8 @@ function M.setup()
 	map("n", "<C-z>", "u")
 	map("i", "<C-z>", "<C-o>u")
 
-    -- toggle terminal
-    map("t", "<Esc>", "<C-\\><C-n>", { silent = true })
+	-- toggle terminal
+	map("t", "<Esc>", "<C-\\><C-n>", { silent = true })
 
 	-- Move lines
 	map("n", "<A-k>", ":m .-2<CR>==")
@@ -73,7 +73,7 @@ function M.setup()
 	map("i", "<Down>", "<C-o>gj")
 	map("i", "<Up>", "<C-o>gk")
 
-    map("n", "<C-q>", ":qa<CR>")
+	map("n", "<C-q>", ":qa<CR>")
 
 	-- Select current line
 	map("n", "<CR>", "V")

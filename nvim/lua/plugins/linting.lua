@@ -3,10 +3,7 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local lint = require("lint")
-		lint.linters_by_ft = {
-			-- lua = { "luacheck" },
-			--	go = { "gospel" },
-		}
+		lint.linters_by_ft = {}
 
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
@@ -16,9 +13,5 @@ return {
 				lint.try_lint()
 			end,
 		})
-
-		vim.keymap.set("n", "<leader>l", function()
-			lint.try_lint()
-		end, { desc = "Trigger linting for current file" })
 	end,
 }

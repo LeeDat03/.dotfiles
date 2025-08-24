@@ -1,4 +1,23 @@
 return {
+	{
+		"rcarriga/nvim-notify",
+		event = "VeryLazy",
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				stages = "static",
+				timeout = 1500,
+				render = "compact",
+				max_width = 50,
+				max_height = 5,
+				fps = 30,
+				level = 2,
+				top_down = true,
+			})
+
+			vim.notify = notify
+		end,
+	},
 	-- Auto pair + auto close
 	{
 		"windwp/nvim-autopairs",
@@ -17,29 +36,11 @@ return {
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
-		-- keys = {
-		-- 	{
-		-- 		"<c-\\>", -- Your primary toggle mapping (toggles last active/new)
-		-- 		"<cmd>ToggleTerm<cr>",
-		-- 		desc = "Toggle terminal",
-		-- 	},
-		-- },
 		keys = {
 			{
 				"<C-`>",
 				"<cmd>ToggleTerm<cr>",
 				desc = "Toggle last/default terminal (size 12), or specific index with prefix",
-			},
-			-- The "<leader>tn" mapping for "new terminal" is still useful if you don't want to type a number
-			{
-				"<leader>tn", -- Example: 't'erminal 'n'ew (auto-numbered)
-				function()
-					local terminal = require("toggleterm.terminal")
-					local count = terminal.get_next_free_terminal_count()
-					-- Using the plugin's native ToggleTerm command to respect 'size = 110' from setup
-					vim.cmd("ToggleTerm " .. count)
-				end,
-				desc = "Open new terminal slot (auto-numbered, uses setup size)",
 			},
 		},
 		config = function()
@@ -52,6 +53,7 @@ return {
 				winbar = {
 					enabled = false,
 				},
+				shell = "pwsh",
 				term_win_opts = {
 					key_bindings = {
 						normal_mode = "jk",
@@ -131,43 +133,214 @@ return {
 		},
 	},
 
-	-- Telescope: find text + file
+	-- -- Telescope: find text + file
 	{
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.8",
+		branch = "0.1.x",
+		event = "VeryLazy",
 		dependencies = {
-			"nvim-lua/plenary.nvim",
+			{ "nvim-lua/plenary.nvim", lazy = true },
+			{
+				"nvim-telescope/telescope-live-grep-args.nvim",
+				lazy = true,
+				config = function()
+					require("telescope").load_extension("live_grep_args")
+				end,
+			},
 		},
 		config = function()
 			local telescope = require("telescope")
-			local actions = require("telescope.actions")
 			local builtin = require("telescope.builtin")
+			local extensions = telescope.extensions
+			local themes = require("telescope.themes")
+
 			telescope.setup({
 				defaults = {
-					path_display = { "truncate" },
+					path_display = { "smart" },
 					mappings = {
 						i = {
-							["<C-k>"] = actions.move_selection_previous, -- move to prev result
-							["<C-j>"] = actions.move_selection_next, -- move to next result
-							["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+							["<Esc>"] = require("telescope.actions").close,
+							["<C-j>"] = require("telescope.actions").move_selection_next,
+							["<C-k>"] = require("telescope.actions").move_selection_previous,
 						},
+						n = {
+							["<C-j>"] = require("telescope.actions").move_selection_next,
+							["<C-k>"] = require("telescope.actions").move_selection_previous,
+						},
+					},
+
+					file_ignore_patterns = {
+						-- Common junk
+						"node_modules",
+						"dist",
+						"build",
+						"target",
+						"out",
+						"bin",
+						"obj",
+						"coverage",
+						"vendor",
+						".venv",
+						"venv",
+						"__pycache__",
+						"%.egg%-info",
+						"bower_components",
+						"%.pnpm%-store",
+						"%.tmp",
+						"%.temp",
+						"%.cache",
+						"%.DS_Store",
+						"%.swp",
+						"%.swo",
+						"%.bak",
+						"%.backup",
+						"%.pyc",
+						"%.pyo",
+						"%.class",
+						"%.o",
+						"%.obj",
+
+						-- Unity-specific
+						"^Library/",
+						"^Logs/",
+						"^Temp/",
+						"^Obj/",
+						"^Build/",
+						"^UserSettings/",
+						"^.gradle/",
+						"%.csproj$",
+						"%.unityproj$",
+						"%.sln$",
+						"%.pidb$",
+						"%.booproj$",
+						"%.svd$",
+						"%.pdb$",
+						"%.mdb$",
+						"%.opendb$",
+						"%.VC%.db$",
+						"%.meta$",
+
+						-- Binaries / media
+						"%.jpg$",
+						"%.jpeg$",
+						"%.png$",
+						"%.gif$",
+						"%.svg$",
+						"%.mp4$",
+						"%.mkv$",
+						"%.avi$",
+						"%.mp3$",
+						"%.wav$",
+						"%.zip$",
+						"%.tar$",
+						"%.gz$",
+						"%.7z$",
+						"%.exe$",
+						"%.dll$",
+						"%.so$",
+						"%.dylib$",
+						"%.pdf$",
+
+						-- Misc project noise
+						"package%-lock%.json",
+						"yarn%.lock",
+						"pnpm%-lock%.yaml",
+						"%.min%.js$",
+						"%.min%.css$",
+						"%.map$",
+						"%.db$",
+						"%.sqlite$",
+						"%.sqlite3$",
+
+						-- CI / git noise
+						"^.github/",
+						"^.gitlab/",
+						"%.gitignore$",
+						"%.gitattributes$",
+						"^.circleci/",
+						"%.travis%.yml$",
+					},
+				},
+				pickers = {
+					find_files = {
+						theme = "dropdown",
+						previewer = false,
+						hidden = true,
+						path_display = { "smart" },
+					},
+					live_grep = {
+						theme = "dropdown",
+						previewer = true,
+					},
+					current_buffer_fuzzy_find = {
+						theme = "dropdown",
+						previewer = false,
+					},
+					buffers = {
+						sort_lastused = true,
+						theme = "dropdown",
+						previewer = false,
+						path_display = { "tail" },
+						mappings = {
+							i = {
+								["<C-d>"] = "delete_buffer",
+							},
+							n = {
+								["<C-d>"] = "delete_buffer",
+							},
+						},
+					},
+					oldfiles = {
+						theme = "dropdown",
+						previewer = false,
+						path_display = { "smart" },
+					},
+					keymaps = {
+						theme = "dropdown",
+						layout_config = {
+							width = 0.8,
+							height = 0.4,
+						},
+					},
+					help_tags = {
+						theme = "dropdown",
+						previewer = false,
 					},
 				},
 			})
 
-			-- set keymaps
-			local keymap = vim.keymap -- for conciseness
+			-- Load extensions
+			telescope.load_extension("live_grep_args")
 
-			keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Fuzzy find files in cwd" })
-			keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
-			keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
-			keymap.set(
-				"n",
-				"<leader>fc",
-				"<cmd>Telescope grep_string<cr>",
-				{ desc = "Find string under cursor in cwd" }
-			)
-			keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
+			-- Minimal dropdown keymaps
+			local map = vim.keymap.set
+			map("n", "<leader>fs", function()
+				extensions.live_grep_args.live_grep_args(themes.get_dropdown({ previewer = true }))
+			end, { desc = "Live Grep Args (dropdown)" })
+
+			map("n", "<leader>fb", function()
+				builtin.current_buffer_fuzzy_find(themes.get_dropdown({ previewer = false }))
+			end, { desc = "Fuzzy Find in Buffer (dropdown)" })
+
+			map("n", "<leader>fo", function()
+				builtin.oldfiles(themes.get_dropdown({ previewer = false }))
+			end, { desc = "Recent Files (dropdown)" })
+
+			map("n", "<leader>fk", function()
+				builtin.keymaps(themes.get_dropdown({ previewer = false }))
+			end, { desc = "Keymaps (dropdown)" })
+
+			map("n", "<Tab>", function()
+				builtin.buffers(themes.get_dropdown({ previewer = false }))
+			end, { desc = "Buffers (dropdown)" })
+
+			map("n", "<leader>ff", function()
+				builtin.find_files(themes.get_dropdown({ previewer = true, hidden = true }))
+			end, { desc = "Find Files (dropdown)" })
+
+			map("n", "<leader>gr", function()
+				builtin.lsp_references(themes.get_dropdown({ previewer = false }))
+			end, { desc = "LSP References (dropdown)" })
 		end,
 	},
 

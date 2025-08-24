@@ -41,8 +41,8 @@
           "background": "#ffe093",
           "foreground": "p:black",
           "style": "plain",
-          "template": " \uf2c0 {{.HostName}}\ue0bd{{.UserName}}\u2800",
-          "type": "session"
+          "template": " \uf4bc MEM: {{ round .PhysicalPercentUsed .Precision }}% | {{ (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) }}/{{ (div .PhysicalTotalMemory 1073741824.0) }}GB \ue266 ",
+          "type": "sysinfo"
         },
         {
           "background": "#ffffd6",
@@ -71,7 +71,7 @@
             "style": "agnoster"
           },
           "style": "plain",
-          "template": "<p:white>\u2514</><#93d0ff>[</> {{.Path}} <#93d0ff>]</>",
+          "template": "<p:white>\u2514</><#93d0ff>[</>{{.Location}}<#93d0ff>]</>",
           "type": "path"
         }
       ]
@@ -84,9 +84,7 @@
         {
           "background": "transparent",
           "foreground": "#81ff91",
-          "foreground_templates": [
-            "{{if gt .Code 0}}#ff3030{{end}}"
-          ],
+          "foreground_templates": ["{{if gt .Code 0}}#ff3030{{end}}"],
           "properties": {
             "always_enabled": true
           },

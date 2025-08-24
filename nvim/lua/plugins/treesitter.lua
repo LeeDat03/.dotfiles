@@ -7,14 +7,14 @@ return {
 		config = function()
 			require("nvim-treesitter.configs").setup({
 				ensure_installed = {
-					"javascript",
-					"typescript",
-					"zig",
-					"go",
-					"sql",
-					"css",
-					"html",
-					"tsx",
+					-- "javascript",
+					-- "typescript",
+					-- "zig",
+					-- "go",
+					-- "sql",
+					-- "css",
+					-- "html",
+					-- "tsx",
 				},
 				auto_install = true, -- Automatically install missing parsers,
 				-- Sync installation (installs parsers synchronously)
