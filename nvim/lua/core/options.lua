@@ -30,7 +30,9 @@ opt.autoindent = true
 -- line wrapping
 opt.wrap = true
 opt.linebreak = true
-opt.textwidth = 80
+opt.textwidth = 0
+opt.wrapmargin = 0
+opt.breakindent = true
 
 -- search settings
 opt.ignorecase = true

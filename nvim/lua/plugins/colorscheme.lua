@@ -1,12 +1,8 @@
 return {
-	{
-		"khoido2003/classic_monokai.nvim",
-		event = "UIEnter",
-		priority = 1000,
-		config = function()
-			require("classic_monokai").setup({})
-
-			vim.cmd.colorscheme("classic-monokai")
-		end,
-	},
+	"khoido2003/monokai-v2.nvim",
+	priority = 1000,
+	config = function()
+		require("monokai-v2").setup()
+		vim.cmd("colorscheme monokai-v2")
+	end,
 }

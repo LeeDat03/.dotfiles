@@ -8,10 +8,10 @@ local config = wezterm.config_builder()
 config.default_prog = { "pwsh.exe", "-NoLogo" }
 
 -- COLORSCHEME
-config.color_scheme = "Monokai (dark) (terminal.sexy)"
+config.color_scheme = "Monokai Pro Ristretto (Gogh)"
 
 -- FONTS
-config.font_size = 12.5
+config.font_size = 12
 config.font = wezterm.font("MonaspiceAr Nerd Font", { weight = "Medium", stretch = "Normal" }) -- (AKA: MonaspiceAr NF, MonaspiceAr NF Medium)
 
 -- TAB BAR

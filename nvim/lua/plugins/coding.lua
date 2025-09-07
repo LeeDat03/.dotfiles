@@ -280,7 +280,7 @@ return {
 						sort_lastused = true,
 						theme = "dropdown",
 						previewer = false,
-						path_display = { "tail" },
+						path_display = { "smart" },
 						mappings = {
 							i = {
 								["<C-d>"] = "delete_buffer",

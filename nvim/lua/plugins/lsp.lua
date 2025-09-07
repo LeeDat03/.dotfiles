@@ -33,6 +33,15 @@ return {
 	},
 
 	{
+		"seblyng/roslyn.nvim",
+		---@module 'roslyn.config'
+		---@type RoslynNvimConfig
+		opts = {
+			filewatching = "off", -- your configuration comes here; leave empty for default settings
+		},
+	},
+
+	{
 		"saghen/blink.cmp",
 		-- snippet
 		dependencies = {
@@ -145,7 +154,7 @@ return {
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 			local servers = {
-				roslyn_ls = {},
+				-- roslyn_ls = {},
 				ts_ls = {},
 				gopls = {},
 				htm = {},
@@ -173,6 +182,14 @@ return {
 				vim.lsp.config(server, vim.tbl_deep_extend("force", { capabilities = capabilities }, config or {}))
 				vim.lsp.enable(server)
 			end
+		end,
+	},
+
+	{
+		"khoido2003/roslyn-filewatch.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("roslyn_filewatch").setup({})
 		end,
 	},
 }
