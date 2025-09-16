@@ -100,7 +100,7 @@ return {
 					lualine_c = {
 						{
 							function()
-								local filename = vim.fn.expand("%:t")
+								local filename = vim.fn.expand("%:.")
 								local file_status = ""
 								if vim.bo.modified then
 									file_status = file_status .. " ●"
@@ -147,7 +147,7 @@ return {
 								if #clients == 0 then
 									return icon .. " no LSP"
 								end
-								return icon .. " LSP"
+								return icon .. " "
 							end,
 							cond = function()
 								return vim.fn.winwidth(0) > 60

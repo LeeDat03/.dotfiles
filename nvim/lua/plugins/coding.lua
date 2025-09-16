@@ -1,5 +1,8 @@
 return {
 	{
+		"sindrets/diffview.nvim",
+	},
+	{
 		"rcarriga/nvim-notify",
 		event = "VeryLazy",
 		config = function()
@@ -29,6 +32,16 @@ return {
 		event = "InsertEnter",
 		config = function()
 			require("nvim-ts-autotag").setup()
+		end,
+	},
+	{
+		"kylechui/nvim-surround",
+		version = "^3.0.0", -- Use for stability; omit to use `main` branch for the latest features
+		event = "VeryLazy",
+		config = function()
+			require("nvim-surround").setup({
+				-- Configuration here, or leave empty to use defaults
+			})
 		end,
 	},
 
@@ -120,7 +133,6 @@ return {
 			"MeanderingProgrammer/render-markdown.nvim",
 			dependencies = {
 				"nvim-treesitter/nvim-treesitter",
-				"echasnovski/mini.icons",
 			},
 			event = { "BufReadPre *.md", "BufWinEnter *.md" }, -- Load only when a Markdown file is opened
 			config = function()

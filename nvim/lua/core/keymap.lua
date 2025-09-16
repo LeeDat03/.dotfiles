@@ -44,9 +44,24 @@ function M.setup()
 		end
 	end, { desc = "Restart Roslyn LSP on all buffers" })
 
+	-- Split window
+	map("n", "<leader>sv", "<C-w>v", { desc = "Vertical split" })
+	map("n", "<leader>sh", "<C-w>s", { desc = "Horizontal split" })
+	map("n", "<leader>se", "<C-w>=", { desc = "Equalize splits" })
+	map("n", "<leader>sx", ":close<CR>", { desc = "Close split" })
+
+	-- Half page jumping keeps cursor centered
+	map("n", "<C-d>", "<C-d>zz")
+	map("n", "<C-u>", "<C-u>zz")
+
+	-- Search next/previous keeps cursor centered and opens folds if any
+	map("n", "n", "nzzzv")
+	map("n", "N", "Nzzzv")
+
 	-- General editing
 	map("n", "<leader>h", ":nohlsearch<CR>") -- Clear search highlight
 	map("n", "<C-s>", ":w<CR>") -- Save file
+	map("i", "<C-s>", ":w<CR>")
 	map("n", "<C-a>", "ggVG") -- Select all
 
 	-- Copy/paste with system clipboard

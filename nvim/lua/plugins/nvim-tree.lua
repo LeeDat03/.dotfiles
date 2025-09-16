@@ -1,7 +1,31 @@
 return {
 	{
+		"aaronik/treewalker.nvim",
+		opt = {
+			highlight = true,
+			highlight_duration = 500,
+			highlight_group = "CursorLine",
+			select = false,
+			notifications = true,
+			jumplist = true,
+		},
+		config = function()
+			-- movement
+			vim.keymap.set({ "n", "v" }, "<A-k>", "<cmd>Treewalker Up<cr>", { silent = true })
+			vim.keymap.set({ "n", "v" }, "<A-j>", "<cmd>Treewalker Down<cr>", { silent = true })
+			vim.keymap.set({ "n", "v" }, "<A-h>", "<cmd>Treewalker Left<cr>", { silent = true })
+			vim.keymap.set({ "n", "v" }, "<A-l>", "<cmd>Treewalker Right<cr>", { silent = true })
+
+			-- swapping
+			vim.keymap.set({ "n" }, "<A-S-k>", "<cmd>Treewalker SwapUp<cr>", { silent = true })
+			vim.keymap.set({ "n" }, "<A-S-j>", "<cmd>Treewalker SwapDown<cr>", { silent = true })
+			vim.keymap.set({ "n" }, "<A-S-h>", "<cmd>Treewalker SwapLeft<cr>", { silent = true })
+			vim.keymap.set({ "n" }, "<A-S-l>", "<cmd>Treewalker SwapRight<cr>", { silent = true })
+		end,
+	},
+	{
 		"nvim-tree/nvim-tree.lua",
-		dependencies = { "echasnovski/mini.icons" },
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		keys = {
 			{ "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Toggle File Explorer" },
 		},
@@ -47,30 +71,6 @@ return {
 				disable_netrw = true,
 				hijack_netrw = true,
 			})
-		end,
-	},
-
-	{
-		"echasnovski/mini.icons",
-		-- Load early to ensure icons are available for other plugins
-		event = "VimEnter",
-		priority = 1000,
-		config = function()
-			local icons = require("mini.icons")
-
-			icons.setup({
-				style = "glyph",
-				-- Always show file extension icons
-				use_file_extension = function(_, _)
-					return true
-				end,
-			})
-
-			vim.g.loaded_nvim_web_devicons = 1
-			package.loaded["nvim-web-devicons"] = nil
-			package.preload["nvim-web-devicons"] = function()
-				return icons.mock_nvim_web_devicons()
-			end
 		end,
 	},
 }
