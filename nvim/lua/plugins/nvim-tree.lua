@@ -1,29 +1,5 @@
 return {
 	{
-		"aaronik/treewalker.nvim",
-		opt = {
-			highlight = true,
-			highlight_duration = 500,
-			highlight_group = "CursorLine",
-			select = false,
-			notifications = true,
-			jumplist = true,
-		},
-		config = function()
-			-- movement
-			vim.keymap.set({ "n", "v" }, "<A-k>", "<cmd>Treewalker Up<cr>", { silent = true })
-			vim.keymap.set({ "n", "v" }, "<A-j>", "<cmd>Treewalker Down<cr>", { silent = true })
-			vim.keymap.set({ "n", "v" }, "<A-h>", "<cmd>Treewalker Left<cr>", { silent = true })
-			vim.keymap.set({ "n", "v" }, "<A-l>", "<cmd>Treewalker Right<cr>", { silent = true })
-
-			-- swapping
-			vim.keymap.set({ "n" }, "<A-S-k>", "<cmd>Treewalker SwapUp<cr>", { silent = true })
-			vim.keymap.set({ "n" }, "<A-S-j>", "<cmd>Treewalker SwapDown<cr>", { silent = true })
-			vim.keymap.set({ "n" }, "<A-S-h>", "<cmd>Treewalker SwapLeft<cr>", { silent = true })
-			vim.keymap.set({ "n" }, "<A-S-l>", "<cmd>Treewalker SwapRight<cr>", { silent = true })
-		end,
-	},
-	{
 		"nvim-tree/nvim-tree.lua",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		keys = {
@@ -49,8 +25,7 @@ return {
 						"Library/*", -- Unity local cache
 						"Logs/*", -- Unity log files
 						"Temp/*", -- Temp build stuff
-						"Obj/*", -- Build object cache
-						"Build/*", -- Compiled builds
+						"^Obj$", -- ONLY hide Obj folder, not Object files
 						"UserSettings/*", -- Local Unity editor settings
 						".gradle/*", -- Android builds
 						"*.csproj", -- Auto-generated C# project files

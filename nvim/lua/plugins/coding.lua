@@ -1,4 +1,31 @@
 return {
+	-- Add vim-move for raw line/block movement
+	{
+		"matze/vim-move",
+		config = function()
+			vim.g.move_key_modifier = "A" -- Alt as modifier
+		end,
+	},
+	{
+		"aaronik/treewalker.nvim",
+		opts = {
+			highlight = true,
+			highlight_duration = 500,
+			highlight_group = "CursorLine",
+			select = false,
+			notifications = true,
+			jumplist = true,
+		},
+		config = function(_, opts)
+			require("treewalker").setup(opts)
+
+			-- swapping
+			vim.keymap.set("n", "<A-S-k>", "<cmd>Treewalker SwapUp<cr>", { silent = true })
+			vim.keymap.set("n", "<A-S-j>", "<cmd>Treewalker SwapDown<cr>", { silent = true })
+			vim.keymap.set("n", "<A-S-h>", "<cmd>Treewalker SwapLeft<cr>", { silent = true })
+			vim.keymap.set("n", "<A-S-l>", "<cmd>Treewalker SwapRight<cr>", { silent = true })
+		end,
+	},
 	{
 		"sindrets/diffview.nvim",
 	},
